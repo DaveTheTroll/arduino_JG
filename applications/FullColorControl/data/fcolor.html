@@ -1,0 +1,138 @@
+﻿<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>Full control</title>
+	<script>
+		function setColor(color) {
+			var str = color + " : ";
+			for (var i = 0; i < 12; i++) {
+				if (document.getElementById('led' + i.toString()).checked) {
+					str += i.toString() + " ";
+
+					var xhttp = new XMLHttpRequest();
+					xhttp.open("GET", "http://192.168.4.1/_" + color + '_' + i.toString());
+					xhttp.send();
+				}
+			}
+			document.getElementById("dbg").innerHTML = str;
+		}
+		function toHex(n) {
+			return ("0" + n.toString(16)).substr(-2);
+		}
+		function HSVtoRGB(h, s, v) {
+			var r, g, b, i, f, p, q, t;
+			if (arguments.length === 1) {
+				s = h.s, v = h.v, h = h.h;
+			}
+			i = Math.floor(h * 6);
+			f = h * 6 - i;
+			p = v * (1 - s);
+			q = v * (1 - f * s);
+			t = v * (1 - (1 - f) * s);
+			switch (i % 6) {
+				case 0: r = v, g = t, b = p; break;
+				case 1: r = q, g = v, b = p; break;
+				case 2: r = p, g = v, b = t; break;
+				case 3: r = p, g = q, b = v; break;
+				case 4: r = t, g = p, b = v; break;
+				case 5: r = v, g = p, b = q; break;
+			}
+			r = Math.round(r * 255);
+			g = Math.round(g * 255);
+			b = Math.round(b * 255);
+			return toHex(r) + toHex(g) + toHex(b);
+		}
+		var N = 15;
+		function setHue(h) {
+			for (var y = 0; y < N; y++) {
+				for (var x = 0; x < N; x++) {
+					var cell = document.getElementById("C" + x.toString() + "_" + y.toString());
+					s = x * 1.0 / (N - 1);
+					v = (N - 1 - y) * 1.0 / (N - 1);
+					cell.C = HSVtoRGB(h, s, v);
+					cell.style.backgroundColor = "#" + cell.C;
+				}
+			}
+		}
+		function init() {
+			var table = document.getElementById("colors");
+			for (var y = 0; y < N; y++) {
+				var row = table.insertRow(y);
+				for (var x = 0; x < N; x++) {
+					var cell = row.insertCell(x);
+					cell.id = "C" + x.toString() + "_" + y.toString();
+					cell.innerHTML = "&nbsp;";
+					cell.style.width = Math.floor(100 / (N + 2)).toString() + "%";
+					cell.onclick = function () {
+						setColor(event.currentTarget.C);
+					};
+				}
+				cell = row.insertCell(N);
+				cell.innerHTML = "&nbsp;";
+				cell.style.width = Math.floor(100 / (N + 2)).toString() + "%";
+
+				cell = row.insertCell(N+1);
+				cell.id = "H" + y.toString();
+				h = y * 1.0 / N;
+				cell.innerHTML = "&nbsp;";
+				cell.style.width = Math.floor(100 / (N+2)).toString() + "%";
+				cell.style.backgroundColor = HSVtoRGB(h, 1, 1);
+				cell.h = h;
+				cell.onclick = function () {
+					setHue(event.currentTarget.h);
+				};
+			}
+			setHue(0.25);
+		}
+	</script>
+	<style>
+		body {
+			font-family: sans-serif;
+		}
+
+		td {
+			text-align: center;
+			vertical-align: top;
+		}
+	</style>
+</head>
+<body onload="init()">
+	<table>
+		<tr>
+			<td>
+				<table id="led">
+					<tr>
+						<td>0</td>
+						<td>1</td>
+						<td>2</td>
+						<td>3</td>
+						<td>4</td>
+						<td>5</td>
+						<td>6</td>
+						<td>7</td>
+						<td>8</td>
+						<td>9</td>
+						<td>10</td>
+						<td>11</td>
+					</tr>
+					<tr>
+						<td><input type="checkbox" id="led0" value="0" checked /></td>
+						<td><input type="checkbox" id="led1" value="1" checked /></td>
+						<td><input type="checkbox" id="led2" value="2" checked /></td>
+						<td><input type="checkbox" id="led3" value="3" checked /></td>
+						<td><input type="checkbox" id="led4" value="4" checked /></td>
+						<td><input type="checkbox" id="led5" value="5" checked /></td>
+						<td><input type="checkbox" id="led6" value="6" checked /></td>
+						<td><input type="checkbox" id="led7" value="7" checked /></td>
+						<td><input type="checkbox" id="led8" value="8" checked /></td>
+						<td><input type="checkbox" id="led9" value="9" checked /></td>
+						<td><input type="checkbox" id="led10" value="10" checked /></td>
+						<td><input type="checkbox" id="led11" value="11" checked /></td>
+					</tr>
+				</table>
+			</td>
+			<td id="dbg"></td>
+		</tr>
+	</table>
+	<table id="colors" width="100%" height="80%"></table>
+</body>
+</html>

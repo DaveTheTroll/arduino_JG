@@ -1,0 +1,58 @@
+<html>
+<head>
+	<title>Singing Stone</title>
+	<script src='jquery-3.3.1.min.js'></script>
+	<script src='spectrum.js'></script>
+	<link rel='stylesheet' href='spectrum.css' />
+	<script type="text/javascript">
+		var i = 0;
+		function updateColor(color) {
+			$('#rgb').text(color);
+			var rgb6 = color.toString();
+			var rgb3 = '#' + rgb6[1] + rgb6[3] + rgb6[5];
+			$('#rgb3').text(rgb3);
+			$('#rgbBlock').css('background-color', color);
+			$('#rgb3Block').css('background-color', rgb3);
+
+			var url = "http://singing_stone.local/_" + rgb6[1] + rgb6[3] + rgb6[5];
+
+			$.ajax({
+				url: url,
+				success: function (ret) {
+					$('#ret').text("[" + ret + "] " + (i++).toString());
+				},
+				error: function (xhr, ajaxOptions, thrownError) {
+					$('#ret').text(thrownError) + (i++).toString();
+				}
+			})
+		}
+
+		function onReady() {
+			$("#flat").spectrum({
+				flat: true,
+				showInput: true,
+				move: updateColor,
+				preferredFormat: 'hex6'
+			});
+		}
+
+		$(document).ready(onReady)
+	</script>
+	<style>
+		.block {
+			width:32px;
+			height:32px;
+			background-color:gray;
+		}
+	</style>
+</head>
+<body>
+	<h1>Singing Stone</h1>
+	<input type='text' id="flat" />
+	<table>
+		<tr><td id="rgb"></td><td><div class="block" id="rgbBlock">&nbsp;</div></td></tr>
+		<tr><td id="rgb3"></td><td><div class="block" id="rgb3Block">&nbsp;</div></td></tr>
+		<tr><td id="ret" colspan="2"></td></tr>
+	</table>
+</body>
+</html>

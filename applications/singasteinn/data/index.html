@@ -1,0 +1,42 @@
+﻿<html>
+<head>
+	<title>Singasteinn</title>
+	<script>
+		function setMode(mode) {
+			document.getElementById("out").innerHTML = "SENDING...";
+
+			var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function () {
+				if (this.readyState == 4) {
+					document.getElementById("out").innerHTML = this.responseText;
+				}
+			};
+			xhttp.open("GET", "http://singasteinn.local/_" + mode);
+			xhttp.send();
+		}
+	</script>
+	<style>
+		body {
+			background-color: black;
+			text-align: center;
+			color: white;
+		}
+		.button {
+			width: 640;
+			height: 400;
+			border: 2px solid black;
+			font-size: 100px;
+			text-align:center;
+			vertical-align:middle;
+			font-family:sans-serif;
+		}
+	</style>
+</head>
+<body>
+	<table>
+		<tr><td class="button" style="background-color:seagreen" onclick="setMode('0')">MODE 0</td></tr>
+		<tr><td class="button" style="background-color:gray" onclick="setMode('1')">MODE 1</td></tr>
+		<tr><td id="out"></td></tr>
+	</table>
+</body>
+</html>
