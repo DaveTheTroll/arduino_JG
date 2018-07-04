@@ -34,7 +34,7 @@ void setup()
   FastLED.show();
 
 #if UNDERBRIDGE==1
-  WiFi.begin("UnderBridgeS2", "billygoat");
+  WiFi.begin("UnderBridgeS2", UBS2_PASSWORD);
 
   int i = 0;
   Serial.println("UnderBridgeS2");
