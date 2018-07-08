@@ -29,7 +29,7 @@ const CRGB colorsMode0[] = {CRGB::Blue, CRGB::Green, CRGB::Aquamarine, CRGB::Aqu
 const CRGB colorsMode1[] = {CRGB::White, CRGB::Goldenrod, CRGB::LightGoldenrodYellow, CRGB::LightGoldenrodYellow, CRGB::Ivory};
 const CRGB *colors[] = {colorsMode0, colorsMode1};
 const int nModes = 2;
-const int nColors[] = {4, 5};
+const int nColors[] = {sizeof(colorsMode0)/sizeof(CRGB), sizeof(colorsMode1)/sizeof(CRGB)};
 
 void setup() {
   Serial.begin(115200);
