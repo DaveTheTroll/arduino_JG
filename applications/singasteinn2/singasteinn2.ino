@@ -99,6 +99,7 @@ void loop() {
                   clash = true;  
               }
             } while (clash);
+            break;
         }
 
         Serial.print(n); Serial.print(" L");
