@@ -1,12 +1,12 @@
-#include <Flame.h>
+#include "Flame.h"
 
 const int N = 80;
 CRGB colors[] = {CRGB(0, 0, 0), CRGB(255, 0, 0), CRGB(255, 128, 0), CRGB(255, 255, 0), CRGB(255, 255, 196)};
 JollyGood::NLEDCollection<N+1> leds;
 JollyGood::Flame<N> flame(leds,
-            45, // sparking
+            30, // sparking
             8, // cooling
-            700/60 // period
+            3*700/60 // period
             );
 
 void setup()
