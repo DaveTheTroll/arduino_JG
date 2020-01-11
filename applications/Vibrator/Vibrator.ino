@@ -14,6 +14,7 @@ void setup() {
 }
 
 void loop() {
+  Serial.print(".");
   if (Serial.available() > 0)
   {
     int val = Serial.parseInt();

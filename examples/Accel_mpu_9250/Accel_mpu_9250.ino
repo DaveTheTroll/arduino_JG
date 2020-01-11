@@ -1,5 +1,4 @@
 #include <Wire.h>
-#include <TimerOne.h>
 
 #define    MPU9250_ADDRESS            0x68
 #define    MAG_ADDRESS                0x0C
@@ -36,15 +35,8 @@ void i2cwrite(uint8_t address, uint8_t reg, uint8_t data)
   Wire.endTransmission();
 }
 
-int led = 1;
 long int ti;
-volatile bool intFlag = false;
-void timer_callback()
-{
-  intFlag = true;
-  digitalWrite(LED_BUILTIN, led ? HIGH : LOW);
-  led = !led;
-}
+long int prev;
 
 void setup()
 {
@@ -58,21 +50,20 @@ void setup()
   i2cwrite(MPU9250_ADDRESS, 0x37, 0x02);                    // bypass mode for magnetometers
   i2cwrite(MAG_ADDRESS, 0x0A, 0x16);                        // continuous magnetometer measurements in 16 bits
 
-  pinMode(LED_BUILTIN, OUTPUT);
-  digitalWrite(LED_BUILTIN, LOW);
-
-  Timer1.initialize(500000); // 0.5s
-  Timer1.attachInterrupt(timer_callback);
-
   ti = millis();
+  prev = ti;
 }
 
 void loop()
 {
-  while(!intFlag);
-  intFlag = false;
+  long int now;
+  do
+  {
+    now = millis();
+  } while (now - prev < 500);
 
-  long int now = millis();
+  prev = now;
+  
   Serial.print(now - ti, DEC); Serial.print('\t');
 
   uint8_t buf[14];
