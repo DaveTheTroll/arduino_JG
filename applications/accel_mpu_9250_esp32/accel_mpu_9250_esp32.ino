@@ -70,7 +70,7 @@ void loop()
     uint8_t mag[7];
     i2cread(MAG_ADDRESS, 0x03, sizeof(mag), mag);
 
-    uint16_t out[10];
+    uint16_t out[14];
 
     out[0] = (buf[0] << 8) | buf[1];    // ax
     out[1] = (buf[2] << 8) | buf[3];    // ay
@@ -82,6 +82,7 @@ void loop()
     out[7] = (mag[1] << 8) | mag[0];    // mx
     out[8] = (mag[3] << 8) | mag[2];    // my
     out[9] = (mag[5] << 8) | mag[4];    // mz
+    *((long int*)(&out[10])) = now;
   
     udp.beginPacket(serverIp, udpPort);
     udp.write((uint8_t*)out, sizeof(out));
