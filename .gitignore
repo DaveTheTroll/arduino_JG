@@ -5,3 +5,5 @@
 /applications/ESP8266_App/password.h
 examples/esp32/wifi_udp_client/ssid.h
 *.pyc
+applications/accel_mpu_9250_esp32/python_udp_server/calib.csv
+applications/accel_mpu_9250_esp32/python_udp_server/calib.xlsx
