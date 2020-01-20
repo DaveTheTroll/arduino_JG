@@ -7,15 +7,15 @@ class accel_data:
         self.buf = buf
 
     @property
-    def accel(self): return struct.unpack('h'*3, self.buf[0:6])
+    def accel(self): return struct.unpack('h'*3, self.buf[0:6])         # 8192 -> 4g
     @property
-    def gyro(self): return struct.unpack('h'*3, self.buf[6:12])
+    def gyro(self): return struct.unpack('h'*3, self.buf[6:12])         # 8192 -> 1000deg/s
     @property
     def temperature(self): return struct.unpack('h', self.buf[12:14])[0]
     @property
-    def mag(self): return struct.unpack('h'*3, self.buf[14:20])
+    def mag(self): return struct.unpack('h'*3, self.buf[14:20])         # 8192-> 4.8mT
     @property
-    def timestamp(self): return struct.unpack('Q', self.buf[20:28])[0]
+    def timestamp(self): return struct.unpack('Q', self.buf[20:28])[0]  # us
 
 class accel_server:
     def __init__(self, reading_callback):
