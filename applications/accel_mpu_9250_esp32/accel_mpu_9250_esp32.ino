@@ -47,7 +47,7 @@ int count = 0;
 void loop()
 {
   long int now = millis();
-  if (now - prev < 500)
+  if (now - prev < 50)
   {
     return;
   }

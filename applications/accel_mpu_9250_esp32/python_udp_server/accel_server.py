@@ -1,7 +1,10 @@
 import socket
 import sys
 import struct
+from math import sqrt
 
+def hypotn(x):
+    return sqrt(sum([a*a for a in x]))
 class accel_data:
     def __init__(self, buf):
         self.buf = buf
