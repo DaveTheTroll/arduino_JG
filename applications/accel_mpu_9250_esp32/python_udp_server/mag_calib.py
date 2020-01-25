@@ -1,82 +1,42 @@
-from accel_server import *
-import numpy as np
-import matplotlib.pyplot as plt
-import mpl_toolkits.mplot3d.axes3d as p3
-import matplotlib.animation as animation
-import threading
+from show_mag import show_mag
+import pickle
 
-def onReading(data):
-    global mx, my, mz
+mag_calib = [0,0,0,0,0,0]
 
-    mx.append(data.mag[0])
-    my.append(data.mag[1])
-    mz.append(data.mag[2])
+def onReading(data,x,y,z):
+    global mag_calib
+    mx = data.mag[0]
+    my = data.mag[1]
+    mz = -data.mag[2]
 
-def update(num):
-    global mx, my, mz
+    #print(("%1.3f %1.3f %1.3f"%(mx, my, mz)))
 
-    if len(mx) < 2:
-        return  # Insufficient data
+    prev = mag_calib.copy()
 
-    mx_ = np.array(mx)
-    my_ = np.array(my)
-    mz_ = np.array(mz)
+    if mx > mag_calib[0] + mag_calib[1]:
+        mag_calib[0] += (mx - (mag_calib[0] + mag_calib[1])) / 2
+        mag_calib[1] = mx - mag_calib[0]
+    elif mx < mag_calib[0] - mag_calib[1]:
+        mag_calib[0] += (mx - (mag_calib[0] - mag_calib[1])) / 2
+        mag_calib[1] = mag_calib[0] - mx
 
-    if mx_.size != my_.size or mx_.size != mz_.size:
-        return  # Out of sync
+    if my > mag_calib[2] + mag_calib[3]:
+        mag_calib[2] += (my - (mag_calib[2] + mag_calib[3])) / 2
+        mag_calib[3] = my - mag_calib[2]
+    elif my < mag_calib[2] - mag_calib[3]:
+        mag_calib[2] += (my - (mag_calib[2] - mag_calib[3])) / 2
+        mag_calib[3] = mag_calib[2] - my
 
-    mx_max = np.max(mx_)
-    mx_min = np.min(mx_)
-    mx_0 = (mx_max + mx_min)/2
-    mx_s = (mx_max - mx_min)/2
-    mx_ = (mx - mx_0) / mx_s
-    
-    my_max = np.max(my_)
-    my_min = np.min(my_)
-    my_0 = (my_max + my_min)/2
-    my_s = (my_max - my_min)/2
-    my_ = (my - my_0) / my_s
-    
-    mz_max = np.max(mz_)
-    mz_min = np.min(mz_)
-    mz_0 = (mz_max + mz_min)/2
-    mz_s = (mz_max - mz_min)/2
-    mz_ = (mz - mz_0) / mz_s
+    if mz > mag_calib[4] + mag_calib[5]:
+        mag_calib[4] += (mz - (mag_calib[4] + mag_calib[5])) / 2
+        mag_calib[5] = mz - mag_calib[4]
+    elif mz < mag_calib[4] - mag_calib[5]:
+        mag_calib[4] += (mz - (mag_calib[4] - mag_calib[5])) / 2
+        mag_calib[5] = mag_calib[4] - mz
 
-    p_hist.set_data(mx_, my_)
-    p_hist.set_3d_properties(mz_)
+def magCalib():
+    global mag_calib
+    return mag_calib
 
-    p_current.set_data((0, mx_[-1]), (0,my_[-1]))
-    p_current.set_3d_properties((0, mz_[-1]))
-
-    print(("%1.3f %1.3f %1.3f"%(mx_[-1], my_[-1], mz_[-1])))
-    return to_update
-
-fig = plt.figure()
-ax = p3.Axes3D(fig)
-ax.plot([0,1],[0,0],[0,0],'r-')
-ax.plot([0,0],[0,1],[0,0],'g-')
-ax.plot([0,0],[0,0],[0,1],'b-')
-p_current, = ax.plot([0,1],[0,1],[0,1],'k-o')
-p_hist, = ax.plot([0,0.5],[0,0],[0,0],'y.')
-ax.set_xlim3d([-1.2, 1.2])
-ax.set_ylim3d([-1.2, 1.2])
-ax.set_zlim3d([-1.2, 1.2])
-ax.set_xlabel("X")
-ax.set_ylabel("Y")
-ax.set_zlabel("Z")
-
-mx = []
-my = []
-mz = []
-
-to_update = (p_current, p_hist)
-line_ani = animation.FuncAnimation(fig, update, 3600,
-                                   interval=10, blit=False)
-
-s = accel_server(onReading)
-
-thread = threading.Thread(target=lambda: s.run(), daemon=True)
-thread.start()
-
-plt.show()
+show_mag(magCalib, onReading)
+pickle.dump(mag_calib, open('mag.calib','wb'))
