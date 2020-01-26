@@ -40,10 +40,13 @@ def update(num):
 
     p_current.set_data((0, mx_[-1]), (0,my_[-1]))
     p_current.set_3d_properties((0, mz_[-1]))
+    
+    magnitude = np.sqrt(mx_[-1]*mx_[-1]+my_[-1]*my_[-1]+mz_[-1]*mz_[-1])
+    ax.set_title("%1.1f  %1.1f  %1.1f -> %1.1f"%(mx_[-1], my_[-1], mz_[-1], magnitude))
     return to_update
 
 def show_mag(magCalib, onReadingCallback = None):
-    global _onReadingCallback, _magCalib, mx, my, mz, to_update
+    global _onReadingCallback, _magCalib, mx, my, mz, to_update, ax
     _onReadingCallback = onReadingCallback
     _magCalib = magCalib
 
@@ -60,6 +63,7 @@ def show_mag(magCalib, onReadingCallback = None):
     ax.set_xlabel("X")
     ax.set_ylabel("Y")
     ax.set_zlabel("Z")
+    ax.set_title("TITLE")
 
     mx = []
     my = []

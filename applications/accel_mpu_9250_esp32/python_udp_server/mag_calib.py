@@ -9,10 +9,6 @@ def onReading(data,x,y,z):
     my = data.mag[1]
     mz = -data.mag[2]
 
-    #print(("%1.3f %1.3f %1.3f"%(mx, my, mz)))
-
-    prev = mag_calib.copy()
-
     if mx > mag_calib[0] + mag_calib[1]:
         mag_calib[0] += (mx - (mag_calib[0] + mag_calib[1])) / 2
         mag_calib[1] = mx - mag_calib[0]

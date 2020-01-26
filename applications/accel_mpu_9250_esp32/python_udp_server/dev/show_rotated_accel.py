@@ -102,6 +102,7 @@ for i in range(xa.shape[0]):
     R = np.matmul(Rx, np.matmul(Ry, Rz))
 
     xa[i,:] = np.matmul(np.linalg.inv(R), a[i,:])
+
     xm[i,:] = np.matmul(np.linalg.inv(R), m[i,:])
 
 plt.figure(1)
