@@ -16,7 +16,9 @@ class accel_data:
     @property
     def temperature(self): return struct.unpack('h', self.buf[12:14])[0]
     @property
-    def mag(self): return struct.unpack('h'*3, self.buf[14:20])         # 8192-> 4.8mT
+    def mag(self):
+        m = struct.unpack('h'*3, self.buf[14:20])         # 8192-> 4.8mT
+        return (m[1],m[0],m[2])    # X&Y switched, Z inverted
     @property
     def timestamp(self): return struct.unpack('Q', self.buf[20:28])[0]  # us
 

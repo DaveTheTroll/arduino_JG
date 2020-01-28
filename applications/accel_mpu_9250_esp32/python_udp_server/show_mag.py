@@ -1,10 +1,9 @@
-from accel_server import *
 import numpy as np
 import matplotlib.pyplot as plt
 import mpl_toolkits.mplot3d.axes3d as p3
 import matplotlib.animation as animation
-import threading
 from mpl_toolkits.mplot3d import proj3d
+from show_helper import start_show
 
 def onReading(data):
     global mx, my, mz, _onReadingCallback
@@ -45,7 +44,7 @@ def update(num):
     ax.set_title("%1.1f  %1.1f  %1.1f -> %1.1f"%(mx_[-1], my_[-1], mz_[-1], magnitude))
     return to_update
 
-def show_mag(magCalib, onReadingCallback = None):
+def show_mag(magCalib, onReadingCallback = None, start = True):
     global _onReadingCallback, _magCalib, mx, my, mz, to_update, ax
     _onReadingCallback = onReadingCallback
     _magCalib = magCalib
@@ -73,25 +72,14 @@ def show_mag(magCalib, onReadingCallback = None):
     line_ani = animation.FuncAnimation(fig, update, 3600,
                                     interval=10, blit=False)
 
-    s = accel_server(onReading)
-
-    thread = threading.Thread(target=lambda: s.run(), daemon=True)
-    thread.start()
-
-    plt.show()
-    
-def orthogonal_proj(zfront, zback):
-    a = (zfront+zback)/(zfront-zback)
-    b = -2*(zfront*zback)/(zfront-zback)
-    return np.array([[1,0,0,0],
-                        [0,1,0,0],
-                        [0,0,a,b],
-                        [0,0,0,zback]])
-proj3d.persp_transformation = orthogonal_proj
+    if start:
+        start_show(onReading)
+                                
+    return line_ani
 
 if __name__ == '__main__':
     import pickle
     mag_calib = pickle.load(open('mag.calib', 'rb'))
     def mc():
         return mag_calib
-    show_mag(mc)
+    line_ani = show_mag(mc)

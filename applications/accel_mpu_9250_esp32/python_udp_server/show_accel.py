@@ -1,10 +1,8 @@
-from accel_server import *
 import numpy as np
 import matplotlib.pyplot as plt
 import mpl_toolkits.mplot3d.axes3d as p3
 import matplotlib.animation as animation
-import threading
-from mpl_toolkits.mplot3d import proj3d
+from show_helper import start_show
 
 def onReading(data):
     global ax, ay, az, _onReadingCallback
@@ -76,25 +74,15 @@ def show_accel(accelCalib, onReadingCallback = None, configFig = None):
     if configFig:
         configFig(fig)
 
-    s = accel_server(onReading)
+    return line_ani
 
-    thread = threading.Thread(target=lambda: s.run(), daemon=True)
-    thread.start()
-
-    plt.show()
-    
-def orthogonal_proj(zfront, zback):
-    a = (zfront+zback)/(zfront-zback)
-    b = -2*(zfront*zback)/(zfront-zback)
-    return np.array([[1,0,0,0],
-                        [0,1,0,0],
-                        [0,0,a,b],
-                        [0,0,0,zback]])
-proj3d.persp_transformation = orthogonal_proj
+def start_accel_show():
+    start_show(onReading)
 
 if __name__ == '__main__':
     import pickle
     accel_calib = pickle.load(open('accel.calib', 'rb'))
     def ac():
         return accel_calib
-    show_accel(ac)
+    line_ani = show_accel(ac)
+    start_accel_show()

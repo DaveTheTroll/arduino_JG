@@ -85,7 +85,10 @@ m_centre = np.reshape((m_max + m_min) / 2, (1,3))
 
 # Normalise to limits
 m = (m_ - np.matmul(np.ones((m_.shape[0],1)), m_centre)) / np.matmul(np.ones((m_.shape[0],1)), m_scale)
-#m[:,2] = -m[:,2]    # Magenetometer Z opposite to Accelerometer
+temp = np.copy(m[:,1])   # swap x and y
+m[:,1] = m[:,0]
+m[:,0] = temp
+m[:,2] = -m[:,2]    # Magenetometer Z opposite to Accelerometer
 
 xa = np.empty(a.shape)
 xm = np.empty(a.shape)
